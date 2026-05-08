@@ -1,3 +1,3 @@
 # setup-bazel-cache-optimization-tryout
 
-Foo
+Foo2
