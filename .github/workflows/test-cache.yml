@@ -1,0 +1,52 @@
+name: Test Cache Optimized
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-optimized:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bazel (cache-optimized)
+        uses: castler/setup-bazel@cache-optimized
+        with:
+          bazelisk-cache: true
+          disk-cache: true
+          repository-cache: true
+          cache-optimized: true
+
+      - name: Build
+        run: bazel build //...
+
+      - name: Show cache info
+        run: |
+          echo "=== Disk cache ==="
+          du -sh ~/.cache/bazel-disk 2>/dev/null || echo "No disk cache"
+          echo "=== Repository cache ==="
+          du -sh ~/.cache/bazel-repo 2>/dev/null || echo "No repo cache"
+
+  build-default:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bazel (default/hash-based)
+        uses: castler/setup-bazel@cache-optimized
+        with:
+          bazelisk-cache: true
+          disk-cache: true
+          repository-cache: true
+          cache-optimized: false
+
+      - name: Build
+        run: bazel build //...
+
+      - name: Show cache info
+        run: |
+          echo "=== Disk cache ==="
+          du -sh ~/.cache/bazel-disk 2>/dev/null || echo "No disk cache"
+          echo "=== Repository cache ==="
+          du -sh ~/.cache/bazel-repo 2>/dev/null || echo "No repo cache"
